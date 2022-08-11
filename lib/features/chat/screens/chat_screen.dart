@@ -5,6 +5,7 @@ import 'package:surf_practice_chat_flutter/features/chat/models/chat_user_local_
 import 'package:surf_practice_chat_flutter/features/chat/repository/chat_repository.dart';
 
 import '../../../theme/app_colors.dart';
+import '../models/chat_message_location_dto.dart';
 
 /// Main screen of chat app, containing messages.
 class ChatScreen extends StatefulWidget {
@@ -178,9 +179,17 @@ class _ChatMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    Color myColor;
+    if (chatData is ChatMessageGeolocationDto) {
+      myColor = AppColors.mainDarkBlue.withOpacity(.2);
+    } else {
+      myColor = AppColors.mainLightGreen;
+    }
+
 
     return Material(
-      color: chatData.chatUserDto is ChatUserLocalDto ? colorScheme.primary.withOpacity(.1) : null,
+      // color: chatData.chatUserDto is ChatUserLocalDto ? colorScheme.primary.withOpacity(.1) : null,
+      color: chatData.chatUserDto is ChatUserLocalDto ? myColor.withOpacity(.1) : myColor,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 18,
