@@ -10,6 +10,8 @@ class ChatMessageDto {
   /// Chat message string.
   final String? message;
 
+  final List<String>? images;
+
   /// Creation date and time.
   final DateTime createdDateTime;
 
@@ -18,6 +20,7 @@ class ChatMessageDto {
     required this.chatUserDto,
     required this.message,
     required this.createdDateTime,
+    this.images,
   });
 
   /// Named constructor for converting DTO from [StudyJamClient].
@@ -29,7 +32,8 @@ class ChatMessageDto {
             ? ChatUserLocalDto.fromSJClient(sjUserDto)
             : ChatUserDto.fromSJClient(sjUserDto),
         message = sjMessageDto.text,
-        createdDateTime = sjMessageDto.created;
+        createdDateTime = sjMessageDto.created,
+        images = sjMessageDto.images;
 
   @override
   String toString() =>

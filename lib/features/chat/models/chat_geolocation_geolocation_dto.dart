@@ -3,10 +3,10 @@ import 'package:surf_study_jam/surf_study_jam.dart';
 /// Data transfer object representing geolocation point.
 class ChatGeolocationDto {
   /// Latitude, in degrees.
-  final double latitude;
+  double latitude;
 
   /// Longitude, in degrees.
-  final double longitude;
+  double longitude;
 
   /// Constructor for [ChatGeolocationDto].
   ChatGeolocationDto({

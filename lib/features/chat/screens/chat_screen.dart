@@ -19,6 +19,8 @@ class ChatScreen extends StatefulWidget {
     Key? key,
   }) : super(key: key);
 
+
+
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
@@ -27,11 +29,19 @@ class _ChatScreenState extends State<ChatScreen> {
   final _nameEditingController = TextEditingController();
 
   Iterable<ChatMessageDto> _currentMessages = [];
+  String geoMessageText1 = '111';
+
+  // set geoMessageText(String geoMessageText) {}
+  String get geoMessageText => geoMessageText1;
+
+  @override
+  initState(){
+    _onUpdatePressed();
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
       backgroundColor: colorScheme.background,
       appBar: PreferredSize(
@@ -49,7 +59,10 @@ class _ChatScreenState extends State<ChatScreen> {
               messages: _currentMessages,
             ),
           ),
-          _ChatTextField(onSendPressed: _onSendPressed),
+          _ChatTextField(
+              onSendPressed: _onSendPressed,
+              geoLocationAdded: _geoLocationAdded,
+          ),
         ],
       ),
     );
@@ -64,6 +77,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _onSendPressed(String messageText) async {
     final messages = await widget.chatRepository.sendMessage(messageText);
+    setState(() {
+      _currentMessages = messages;
+    });
+  }
+
+  Future<void> _geoLocationAdded(ChatGeolocationDto location) async {
+    // geoMessageText = 'какой-то текст';
+    final messages = await widget.chatRepository.sendGeolocationMessage(location: location, message: geoMessageText);
     setState(() {
       _currentMessages = messages;
     });
@@ -91,24 +112,32 @@ class _ChatBody extends StatelessWidget {
 
 class _ChatTextField extends StatelessWidget {
   final ValueChanged<String> onSendPressed;
+  final ValueChanged <ChatGeolocationDto> geoLocationAdded;
 
   final _textEditingController = TextEditingController();
 
   _ChatTextField({
     required this.onSendPressed,
+    required this.geoLocationAdded,
     Key? key,
   }) : super(key: key);
 
+
+  set curentMessage(String curentMessage) {}
+  String get curentMessage => curentMessage;
+
+
   @override
   Widget build(BuildContext context) {
+
     final mediaQuery = MediaQuery.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-
     return Material(
       color: colorScheme.surface,
       elevation: 12,
       child: Padding(
         padding: EdgeInsets.only(
+          top: mediaQuery.padding.top + 8,
           bottom: mediaQuery.padding.bottom + 8,
           left: 16,
         ),
@@ -128,6 +157,19 @@ class _ChatTextField extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+            IconButton(
+              onPressed: () {
+                ChatGeolocationDto curentLocation = ChatGeolocationDto(
+                  longitude: 27,
+                  latitude: 54,
+                );
+                // print(curentLocation.toString());
+                // curentMessage = _textEditingController.text;
+                geoLocationAdded(curentLocation);
+              },
+              icon: const Icon(Icons.location_on),
+              color: colorScheme.onSurface,
             ),
             IconButton(
               onPressed: () => onSendPressed(_textEditingController.text),
@@ -198,6 +240,28 @@ class _ChatMessage extends StatelessWidget {
 
     }
 
+    // List<String> chatImages = [];
+    //
+    // List<String>imagesList =[];
+    // if (chatData.images != null ) {
+    //   print('(chatData.images): ${chatData.images}');
+    //   // print('(chatData.images).lenght: ${(chatData.images).lenght}');
+    //   chatData.images.forEach((image) => chatImages.add(image));
+    //   // (chatData.images).forEach((image) => imagesList.add(image));
+    //   print('chatImages: $chatImages');
+    //   // for (int i=0; i < chatData.images.lenght-1; i++ ){
+    //   //   chatImages.add(chatData.images[i]);
+    //   // }
+    // } else { chatImages.add('1');
+    // };
+
+
+
+    // chatData.images.forEach((image) => Image.network(image))
+    // forEach item in chatData.images {Image.network(item)}
+    //     : SizedBox(height: 4),
+
+    if (chatData.images != null) {print('chatData.images ${chatData.images}');};
 
     return Material(
       // color: chatData.chatUserDto is ChatUserLocalDto ? colorScheme.primary.withOpacity(.1) : null,
@@ -225,6 +289,11 @@ class _ChatMessage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(locationForChat != '' ? locationForChat : ''),
                   const SizedBox(height: 4),
+                  chatData.images != null ? Image.network(chatData.images[0]) : SizedBox(height: 4),
+                  // chatData.images != null ? Image.network(chatData.images[1]) : SizedBox(height: 4),
+                  // chatImages[0] != '1' ? chatImages.forEach((item) => Image.network(item)) : SizedBox(height: 4),
+
+                  // chatData.images != null ? chatData.images.forEach((item) => Image.network(item)) : SizedBox(height: 4),
                   Text('Сообщение создано:\n ${chatData.createdDateTime.toString()}'),
                 ],
               ),
