@@ -1,3 +1,4 @@
+import 'package:bubble/bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:surf_practice_chat_flutter/features/chat/models/chat_message_dto.dart';
 import 'package:surf_practice_chat_flutter/features/chat/models/chat_user_dto.dart';
@@ -224,7 +225,9 @@ class _ChatMessage extends StatelessWidget {
   @override
   // late ChatMessageGeolocationDto location;
 
-  Widget build(BuildContext context) {
+   Widget build(BuildContext context) {
+
+
     ChatGeolocationDto? location;
     String locationForChat= '';
     final colorScheme = Theme.of(context).colorScheme;
@@ -285,7 +288,17 @@ class _ChatMessage extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  Text(chatData.message ?? ''),
+                  Bubble(
+                    style: const BubbleStyle(
+                      nip: BubbleNip.leftBottom,
+                      color: Color.fromARGB(255, 225, 255, 199),
+                      borderColor: Colors.green,
+                      borderWidth: 1,
+                      elevation: 4,
+                      margin: BubbleEdges.only(top: 8, left: 50),
+                      alignment: Alignment.topLeft,
+                    ),
+                    child: Text(chatData.message ?? '')),
                   const SizedBox(height: 4),
                   Text(locationForChat != '' ? locationForChat : ''),
                   const SizedBox(height: 4),
