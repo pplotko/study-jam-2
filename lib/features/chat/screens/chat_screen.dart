@@ -5,6 +5,7 @@ import 'package:surf_practice_chat_flutter/features/chat/models/chat_user_local_
 import 'package:surf_practice_chat_flutter/features/chat/repository/chat_repository.dart';
 
 import '../../../theme/app_colors.dart';
+import '../models/chat_geolocation_geolocation_dto.dart';
 import '../models/chat_message_location_dto.dart';
 
 /// Main screen of chat app, containing messages.
@@ -169,21 +170,32 @@ class _ChatAppBar extends StatelessWidget {
 }
 
 class _ChatMessage extends StatelessWidget {
-  final ChatMessageDto chatData;
-
-  const _ChatMessage({
+  // final ChatMessageDto chatData;
+  var chatData;
+  // final ChatMessageGeolocationDto location;
+  _ChatMessage({
     required this.chatData,
+    // required this.location,
     Key? key,
   }) : super(key: key);
 
   @override
+  // late ChatMessageGeolocationDto location;
+
   Widget build(BuildContext context) {
+    ChatGeolocationDto? location;
+    String locationForChat= '';
     final colorScheme = Theme.of(context).colorScheme;
     Color myColor;
     if (chatData is ChatMessageGeolocationDto) {
       myColor = AppColors.mainDarkBlue.withOpacity(.2);
+      ChatGeolocationDto location = chatData.location;
+      print('location latitude: ${location.latitude}' );
+      print('location longitude: ${location.longitude}' );
+      locationForChat = 'Геометка:\n   location latitude: ${location.latitude}\n'+ '   location longitude: ${location.longitude}' ;
     } else {
       myColor = AppColors.mainLightGreen;
+
     }
 
 
@@ -210,6 +222,10 @@ class _ChatMessage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(chatData.message ?? ''),
+                  const SizedBox(height: 4),
+                  Text(locationForChat != '' ? locationForChat : ''),
+                  const SizedBox(height: 4),
+                  Text('Сообщение создано:\n ${chatData.createdDateTime.toString()}'),
                 ],
               ),
             ),
@@ -232,8 +248,19 @@ class _ChatAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String userName = '';
     final colorScheme = Theme.of(context).colorScheme;
-
+    if (userData.name != null) {
+      if (userData.name!.contains(' ') && userData.name![userData.name!.length-1] != " ") {
+        userName = '${userData.name!.split(' ').first[0]}${userData.name!.split(
+            ' ').last[0]}';
+      } else {
+        userName = '${userData.name![0]}';
+        print('bad name there: userData.name');
+      }
+    } else {
+      userName = "*";
+    }
     return SizedBox(
       width: _size,
       height: _size,
@@ -243,15 +270,18 @@ class _ChatAvatar extends StatelessWidget {
         shape: const CircleBorder(),
         child: Center(
           child: Text(
-            userData.name != null
-                ? '${userData.name!.split(' ').first[0]}${userData.name!.split(' ').last[0]}'
-                : '',
+            userName,
+              // userData.name != null
+              //   ? '${userData.name!.split(' ').first[0]}${userData.name!.split(
+              //       ' ').last[0]}'
+              //   : '-',
             style: TextStyle(
               color: colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
               fontSize: 24,
             ),
           ),
+
         ),
       ),
     );
