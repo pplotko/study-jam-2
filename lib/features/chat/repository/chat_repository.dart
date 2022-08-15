@@ -49,6 +49,10 @@ abstract class IChatRepository {
     String? message,
   });
 
+  Future<Iterable<ChatMessageDto>> sendImageMessage({
+    required List<String> imagePaths,
+    String? message,
+  });
   /// Retrieves chat's user via his [userId].
   ///
   ///
@@ -95,6 +99,25 @@ class ChatRepository implements IChatRepository {
     await _studyJamClient.sendMessage(SjMessageSendsDto(
       text: message,
       geopoint: location.toGeopoint(),
+    ));
+
+    final messages = await _fetchAllMessages();
+
+    return messages;
+  }
+//////
+  @override
+  Future<Iterable<ChatMessageDto>> sendImageMessage({
+    required List<String> imagePaths,
+    String? message,
+  }) async {
+    if (message != null && message.length > IChatRepository.maxMessageLength) {
+      throw InvalidMessageException('Message "$message" is too large.');
+    }
+    await _studyJamClient.sendMessage(SjMessageSendsDto(
+      text: message,
+      // geopoint: location.toGeopoint(),
+      images: imagePaths,
     ));
 
     final messages = await _fetchAllMessages();

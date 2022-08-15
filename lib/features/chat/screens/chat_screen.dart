@@ -63,6 +63,7 @@ class _ChatScreenState extends State<ChatScreen> {
           _ChatTextField(
               onSendPressed: _onSendPressed,
               geoLocationAdded: _geoLocationAdded,
+              imagesAdded: _imagesAdded,
           ),
         ],
       ),
@@ -90,6 +91,15 @@ class _ChatScreenState extends State<ChatScreen> {
       _currentMessages = messages;
     });
   }
+
+  Future<void> _imagesAdded(List<String> imagePaths) async {
+    var MessageText = 'тут будет текст к  картинке';
+    final messages = await widget.chatRepository.sendImageMessage(imagePaths: imagePaths, message: MessageText);
+    setState(() {
+      _currentMessages = messages;
+    });
+  }
+
 }
 
 class _ChatBody extends StatelessWidget {
@@ -114,12 +124,14 @@ class _ChatBody extends StatelessWidget {
 class _ChatTextField extends StatelessWidget {
   final ValueChanged<String> onSendPressed;
   final ValueChanged <ChatGeolocationDto> geoLocationAdded;
+  final ValueChanged <List<String>> imagesAdded;
 
   final _textEditingController = TextEditingController();
 
   _ChatTextField({
     required this.onSendPressed,
     required this.geoLocationAdded,
+    required this.imagesAdded,
     Key? key,
   }) : super(key: key);
 
@@ -170,6 +182,16 @@ class _ChatTextField extends StatelessWidget {
                 geoLocationAdded(curentLocation);
               },
               icon: const Icon(Icons.location_on),
+              color: colorScheme.onSurface,
+            ),
+            IconButton(
+              onPressed: () {
+                List<String> imagesList= ['https://docs.flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png'];
+                // print(curentLocation.toString());
+                // curentMessage = _textEditingController.text;
+                imagesAdded(imagesList);
+              },
+              icon: const Icon(Icons.image),
               color: colorScheme.onSurface,
             ),
             IconButton(
@@ -243,10 +265,7 @@ class _ChatMessage extends StatelessWidget {
 
     }
 
-    List<String> chatImages = [];
     List<Widget> widgetImages = [];
-    //
-    // List<String>imagesList =[];
     if (chatData.images != null ) {
       chatData.images.forEach((image) {
         image != null ? widgetImages.add(Image.network(image)) : print("Null = ${chatData.images.indexOf(image)}");
@@ -256,13 +275,6 @@ class _ChatMessage extends StatelessWidget {
       // widgetImages.add(Image.network("https://docs.flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png"));
       print("chatData.images = null");
     }
-    //   // (chatData.images).forEach((image) => imagesList.add(image));
-    //   print('chatImages: $chatImages');
-    //   // for (int i=0; i < chatData.images.lenght-1; i++ ){
-    //   //   chatImages.add(chatData.images[i]);
-    //   // }
-    // } else { chatImages.add('1');
-    // };
 
 
     if (chatData.images != null) {print('chatData.images ${chatData.images}');};
@@ -303,12 +315,7 @@ class _ChatMessage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(locationForChat != '' ? locationForChat : ''),
                   const SizedBox(height: 4),
-                  // chatData.images != null ? Image.network(chatData.images[0]) : SizedBox(height: 4),
                   widgetImages.isNotEmpty ? Column(children: widgetImages,) : SizedBox(height: 4),
-                  // chatData.images != null ? Image.network(chatData.images[1]) : SizedBox(height: 4),
-                  // chatImages[0] != '1' ? chatImages.forEach((item) => Image.network(item)) : SizedBox(height: 4),
-
-                  // chatData.images != null ? chatData.images.forEach((item) => Image.network(item)) : SizedBox(height: 4),
                   Text('Сообщение создано:\n ${chatData.createdDateTime.toString()}'),
                 ],
               ),
