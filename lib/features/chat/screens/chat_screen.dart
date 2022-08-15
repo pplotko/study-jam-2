@@ -243,13 +243,19 @@ class _ChatMessage extends StatelessWidget {
 
     }
 
-    // List<String> chatImages = [];
+    List<String> chatImages = [];
+    List<Widget> widgetImages = [];
     //
     // List<String>imagesList =[];
-    // if (chatData.images != null ) {
-    //   print('(chatData.images): ${chatData.images}');
-    //   // print('(chatData.images).lenght: ${(chatData.images).lenght}');
-    //   chatData.images.forEach((image) => chatImages.add(image));
+    if (chatData.images != null ) {
+      chatData.images.forEach((image) {
+        image != null ? widgetImages.add(Image.network(image)) : print("Null = ${chatData.images.indexOf(image)}");
+      });
+    } else {
+      widgetImages.add(SizedBox());
+      // widgetImages.add(Image.network("https://docs.flutter.dev/assets/images/shared/brand/flutter/logo/flutter-lockup.png"));
+      print("chatData.images = null");
+    }
     //   // (chatData.images).forEach((image) => imagesList.add(image));
     //   print('chatImages: $chatImages');
     //   // for (int i=0; i < chatData.images.lenght-1; i++ ){
@@ -258,11 +264,6 @@ class _ChatMessage extends StatelessWidget {
     // } else { chatImages.add('1');
     // };
 
-
-
-    // chatData.images.forEach((image) => Image.network(image))
-    // forEach item in chatData.images {Image.network(item)}
-    //     : SizedBox(height: 4),
 
     if (chatData.images != null) {print('chatData.images ${chatData.images}');};
 
@@ -302,7 +303,8 @@ class _ChatMessage extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(locationForChat != '' ? locationForChat : ''),
                   const SizedBox(height: 4),
-                  chatData.images != null ? Image.network(chatData.images[0]) : SizedBox(height: 4),
+                  // chatData.images != null ? Image.network(chatData.images[0]) : SizedBox(height: 4),
+                  widgetImages.isNotEmpty ? Column(children: widgetImages,) : SizedBox(height: 4),
                   // chatData.images != null ? Image.network(chatData.images[1]) : SizedBox(height: 4),
                   // chatImages[0] != '1' ? chatImages.forEach((item) => Image.network(item)) : SizedBox(height: 4),
 
